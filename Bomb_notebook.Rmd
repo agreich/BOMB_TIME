@@ -31,7 +31,34 @@ I see more variation in the W for bomb, not so much for lipids. What does this m
 I need to add in egg size and fish length (and maybe GSI) and see what this means!
 
 DATA WRANGING
+Goal: attach bomb data to individual.
+What is the indiviudal data called?
+(see main R project folder)
+Go back into "Cleaned up Analysis and Graphs.rnb and create a clean csv file with the GSI, and save that locally.
 ```{r}
+#GSI
+GSI_c <- read.csv("Data/c_GSI_for_boms.csv")
+
+#GSI clean
+GSI_c_clean <- read.csv("Data/c_GSI_clean_for_bomb.csv")
+
+#eggs
+Eggs_c <- read.csv("Data/c_all_eggs_bomb.csv")
+C_other_data <- read.csv("Data/c_all_other_stuff.csv")
+  
+  
+#eggs clean
+Eggs_c_clean <- read.csv("Data/c_GSI_clean_for_bomb.csv")
+
+#another idea: add energy content as covariate in egg size analysis?? Uhhh...later. It's bomb time
+```
+
+Combine data frames so your bomb dataframe has covariates
+```{r}
+#joinby
+#r_bind
+#c_bind
+#see data wrangling worksheet
 
 ```
 
