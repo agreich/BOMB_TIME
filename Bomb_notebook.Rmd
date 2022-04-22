@@ -63,6 +63,28 @@ Combine data frames so your bomb dataframe has covariates
 names(Bomb_df)
 Bomb_df_relevant <- Bomb_df[, c(2,3,6,7,8,9,10)]
 
+View(GSI_c_clean)
+length(GSI_c_clean$ID)
+(Bomb_df$InvestNo)
+Bomb_df_relevant$ID<-Bomb_df$InvestNo
+(GSI_c$ID)
+#join Bomb_df_relevant with GSI_c. This will remove non-egg bearers (there were sone? and then I can remove weird fishies after)
+Bomb_with_covariates <- left_join(Bomb_df_relevant, GSI_c, by = "ID" )
+length(Bomb_df_relevant$InvestNo)
+length(Bomb_with_covariates$ID) #woohoo, it worked
+
+```
+
+Add in the covariate of average egg size
+```{r}
+
+```
+
+
+Bomb_with_covariates is my dataset right now. Let's check out them covariates!
+(and maybe normality assuption too on the energy and lipid data!!)
+Pause for now. 04/22/22. Above is what to do next.
+```{r}
 
 ```
 
