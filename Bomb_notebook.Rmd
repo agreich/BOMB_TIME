@@ -60,5 +60,9 @@ Combine data frames so your bomb dataframe has covariates
 #c_bind
 #see data wrangling worksheet
 
+names(Bomb_df)
+Bomb_df_relevant <- Bomb_df[, c(2,3,6,7,8,9,10)]
+
+
 ```
 
