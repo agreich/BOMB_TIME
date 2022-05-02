@@ -9,7 +9,7 @@ Bomb_df <- read.csv("/Users/alexandrareich/Desktop/THESIS TIME!/Compilation of G
 
 names(Bomb_df)
 library(tidyverse)
-View(Bomb_df)
+#View(Bomb_df)
 ```
 
 Plot exploratory stuff
@@ -26,6 +26,55 @@ ggplot(Bomb_df) + aes(x=Wild_or_hatch, y=BombED.Dry.) + geom_boxplot() +geom_jit
 ggplot(Bomb_df) + aes(x=Wild_or_hatch, y=X..lipid) + geom_boxplot() +geom_jitter()
 
 ```
+
+05/02/22 addtiion: t-tests!
+```{r}
+?t.test
+library(dplyr)
+#H0: not different
+#HA: Hatch < Wild
+
+#bomb
+names(Bomb_df)
+Wild_egg_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "W") %>%
+  select(BombED.Dry.)
+    
+Hatch_egg_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "H") %>%
+  select(BombED.Dry.)
+
+(T_test_ED <- t.test(Hatch_egg_energy, Wild_egg_energy, alternative="less", var.equal = T) )
+##HA: x has a lower mean than y
+##assuming homogeneity (constant variance... Is this true tho?)
+
+t.test(Hatch_egg_energy, Wild_egg_energy, alternative="less", var.equal = F) 
+##HA: x has a lower mean than y
+##assuming homogeneity (Not assuming homogeneity)
+##probs not using this one
+
+
+#lipid
+Wild_lipid_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "W") %>%
+  select(X..lipid)
+    
+Hatch_lipid_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "H") %>%
+  select(X..lipid)
+
+(T_test_lipid <- t.test(Hatch_lipid_energy, Wild_lipid_energy, alternative="less", var.equal = T))
+
+
+
+```
+
+Normality tests and such? 05/02/22
+```{r}
+
+```
+
+
 
 I see more variation in the W for bomb, not so much for lipids. What does this mean?
 I need to add in egg size and fish length (and maybe GSI) and see what this means!
