@@ -66,14 +66,37 @@ Hatch_lipid_energy <- Bomb_df %>%
 (T_test_lipid <- t.test(Hatch_lipid_energy, Wild_lipid_energy, alternative="less", var.equal = T))
 
 
-
+#I should probably record these t-test values in the resutls section. My results section is a work in progress...
 ```
 
 Normality tests and such? 05/02/22
 ```{r}
+names(Bomb_df)
+mod_E <- aov(BombED.Dry. ~ Wild_or_hatch, data=Bomb_df)
+mod_L <- aov(X..lipid ~ Wild_or_hatch, data=Bomb_df)
 
+fitted(mod_E)
+#plot residuals vs. fitted?
+r_E <- resid(mod_E)
+ggplot(Bomb_df) + aes(x=r_E, y=mod_E, color=Wild_or_hatch) + geom_point()
+plot(resid(mod_E))
+ggplot(Bomb_df) + aes(x=r_E) + geom_histogram()
+qqnorm(r_E) #concave-down
+shapiro.test(r_E) #shit, not normal. Normality of residuals violated. Is normality of residuals an assumption?
+
+plot(fitted(mod_E), r_E)
+
+#ugh! deal with resids later
 ```
 
+
+Tangent: 05/02/22
+Normality is violated for energy density. Try a glm?
+Which glm family to choose??
+```{r}
+?glm
+
+```
 
 
 I see more variation in the W for bomb, not so much for lipids. What does this mean?
