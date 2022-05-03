@@ -86,15 +86,47 @@ shapiro.test(r_E) #shit, not normal. Normality of residuals violated. Is normali
 
 plot(fitted(mod_E), r_E)
 
-#ugh! deal with resids later
+#ugh! 
+
+fit_L <- fitted(mod_L)
+r_L <- resid(mod_L)
+qqnorm(r_L)
+shapiro.test(r_L) #yes normal, lm ok
+
+plot(r_L) #ok weird, might be an outlier in there
+
+library(onewaytests)
+?bf.test  #use this test to test homogeneity resids!!
+
+hist(Bomb_df$BombED.Dry.)
+hist(log(Bomb_df$BombED.Dry.))
+
 ```
 
 
 Tangent: 05/02/22
 Normality is violated for energy density. Try a glm?
 Which glm family to choose??
+
+Or... log trasform? try transforming x first
 ```{r}
 ?glm
+?box
+library(car)
+?boxCox
+boxCox(mod_E)
+#boxCox(mod_E, lambda=seq(-2, 8, 1/5)) #ugh
+mod_E_log <- aov(log(BombED.Dry.) ~ Wild_or_hatch, data=Bomb_df)
+mod_E_sqrt <- aov(sqrt(BombED.Dry.) ~ Wild_or_hatch, data=Bomb_df)
+mod_E_recip <- aov((1/BombED.Dry.) ~ Wild_or_hatch, data=Bomb_df)
+
+plot(resid(mod_E_log))
+qqnorm(resid(mod_E_log))
+qqnorm(r_E)
+qqnorm(resid(mod_E_sqrt)) #none of these look good
+qqnorm(resid(mod_E_recip)) #this one looks bad in the other direction
+
+shapiro.test(resid(mod_E_recip))
 
 ```
 
@@ -120,7 +152,7 @@ C_other_data <- read.csv("Data/c_all_other_stuff.csv")
   
   
 #eggs clean
-Eggs_c_clean <- read.csv("Data/c_GSI_clean_for_bomb.csv")
+Eggs_c_clean <- read.csv("Data/c_clean_bomb.csv")
 
 #another idea: add energy content as covariate in egg size analysis?? Uhhh...later. It's bomb time
 ```
@@ -135,7 +167,7 @@ Combine data frames so your bomb dataframe has covariates
 names(Bomb_df)
 Bomb_df_relevant <- Bomb_df[, c(2,3,6,7,8,9,10)]
 
-View(GSI_c_clean)
+#View(GSI_c_clean)
 length(GSI_c_clean$ID)
 (Bomb_df$InvestNo)
 Bomb_df_relevant$ID<-Bomb_df$InvestNo
@@ -145,18 +177,50 @@ Bomb_with_covariates <- left_join(Bomb_df_relevant, GSI_c, by = "ID" )
 length(Bomb_df_relevant$InvestNo)
 length(Bomb_with_covariates$ID) #woohoo, it worked
 
+View(Bomb_with_covariates)
+
+
 ```
 
 Add in the covariate of average egg size
 ```{r}
+names(Bomb_with_covariates)
+#of interest: GSI
+#add in: average egg size. This exists somewhere.
+#where is my average egg size document?
+names(Eggs_c)
+names(Eggs_c_clean)
+Eggs_c_clean$Fish.ID
+#test <- Eggs_c %>%
+ # group_by(Fish.ID) %>%
+#  select(Fish.ID, Diameter..mm.) %>%
+ # mutate(EggDiam = mean(Diameter..mm.))
 
+Eggs_av <- Eggs_c %>%
+  group_by(Fish.ID) %>%
+  summarize(Eggs_av = mean(Diameter..mm.))
+
+#NICE!
+#combine Eggs_av with Bomb_with_covariates
+names(Bomb_with_covariates)
+Bomb_with_covariates$Fish.ID
+names(Eggs_av)
+
+#join them!!
+Bomb_with_covariates <- left_join(Bomb_with_covariates, Eggs_av, by = "Fish.ID" )
+  
 ```
 
 
 Bomb_with_covariates is my dataset right now. Let's check out them covariates!
 (and maybe normality assuption too on the energy and lipid data!!)
-Pause for now. 04/22/22. Above is what to do next.
-```{r}
+Pause for now. 04/22/22. Above is what to do next.'
 
+05/02/22
+```{r}
+Bomb_with_covariates_notweird <- Bomb_with_covariates %>%
+  filter(Weird=="n")
+Bomb_with_covariates_notweird_noNA <- na.omit(Bomb_with_covariates_notweird)
+##gets rid of fish number 25, where Milo didnt record the GSI
 ```
 
