@@ -253,7 +253,24 @@ ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Length..mm., y=X..lipid, colo
 ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Length..mm., y=Eggs_av, color=Wild.or.Hatch) + geom_point() #ummm
 ```
 
-So... there's just no diff between W and H, no matter how you look at it. Build a model for this?
+So... there's just no diff between W and H, no matter how you look at it. Build a model for this? Maybe? Yes?
+```{r}
+#ED
+names(Bomb_with_covariates_notweird_noNA)
+mod_universal_E <- aov(BombED.Dry. ~ Wild.or.Hatch + Eggs_av + Length..mm.,Bomb_with_covariates_notweird_noNA)
+summary(mod_universal_E)
+
+mod_univ_E_int <- aov(BombED.Dry. ~ Wild.or.Hatch + Eggs_av + Length..mm. + Eggs_av:Length..mm.,Bomb_with_covariates_notweird_noNA)
+summary(mod_univ_E_int)
+
+#lipid
+mod_universal_L <- aov(X..lipid ~ Wild.or.Hatch + Eggs_av + Length..mm.,Bomb_with_covariates_notweird_noNA)
+summary(mod_universal_L)
+
+mod_univ_L_int <- aov(X..lipid ~ Wild.or.Hatch + Eggs_av + Length..mm. + Eggs_av:Length..mm.,Bomb_with_covariates_notweird_noNA)
+summary(mod_univ_L_int)
+```
+
 ```{r}
 
 ```
