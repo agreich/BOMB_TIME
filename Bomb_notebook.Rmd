@@ -282,17 +282,27 @@ Bomb fig:
 base.e <- ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Eggs_av, y=BombED.Dry., color=Wild.or.Hatch) + geom_point()
 ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Length..mm., y=BombED.Dry., color=Wild.or.Hatch) + geom_point()
 
-
+library(cowplot)
 #both boxplots, actually
 #class(Bomb_df$Wild_or_hatch)
-ggplot(Bomb_df) + aes(x=Wild_or_hatch, y=BombED.Dry.) + geom_boxplot(outlier.alpha = 0) +    geom_jitter(aes(color=Wild_or_hatch)) +
+Bomb<- ggplot(Bomb_df) + aes(x=Wild_or_hatch, y=BombED.Dry.) + geom_boxplot(outlier.alpha = 0) +    geom_jitter(aes(color=Wild_or_hatch)) +
  scale_color_manual(values=c("orange", "blue"), name=NULL)+
-  labs(y= "Energy density (kJ/g)", x= "Fish origin")
+  guides(color="none") +
+  labs(y= "Energy density (kJ/g)", x= "Fish origin")+
+  theme_cowplot()
+  
 ##may want to note that Energy Density units is kJ/g dry weight
 
 #the lipid content
-ggplot(Bomb_df) + aes(x=Wild_or_hatch, y=X..lipid) + geom_boxplot(outlier.alpha = 0)+ geom_jitter()+
-  scale_color_manual(values=c("orange", "blue"))
+Lipid<-ggplot(Bomb_df) + aes(x=Wild_or_hatch, y=X..lipid) + geom_boxplot(outlier.alpha = 0) +    geom_jitter(aes(color=Wild_or_hatch)) +
+ scale_color_manual(values=c("orange", "blue"), name=NULL)+
+  labs(y= "Lipid %", x= "Fish origin")+
+  theme_cowplot()
+
+library(patchwork)
+Bomb + Lipid
+
+#nice plot draft. Probably need to clean up so that Wild and hatchery SAY wild and hatchery, maybe get rid of legend all together
 
 ```
 
