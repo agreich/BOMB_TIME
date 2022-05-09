@@ -66,6 +66,11 @@ Hatch_lipid_energy <- Bomb_df %>%
 (T_test_lipid <- t.test(Hatch_lipid_energy, Wild_lipid_energy, alternative="less", var.equal = T))
 
 
+#standard error
+T_test_ED$stderr
+T_test_lipid$stderr
+
+
 #I should probably record these t-test values in the resutls section. My results section is a work in progress...
 ```
 
@@ -314,5 +319,12 @@ Lipid fig:
 #other
 base.l <- ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Eggs_av, y=X..lipid, color=Wild.or.Hatch) + geom_point()
 ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Length..mm., y=X..lipid, color=Wild.or.Hatch) + geom_point()
+```
+
+
+
+```{r}
+summary(mod_E)
+plot(mod_E)
 ```
 
