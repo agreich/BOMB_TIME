@@ -268,6 +268,10 @@ summary(mod_universal_E)
 mod_univ_E_int <- aov(BombED.Dry. ~ Wild.or.Hatch + Eggs_av + Length..mm. + Eggs_av:Length..mm.,Bomb_with_covariates_notweird_noNA)
 summary(mod_univ_E_int)
 
+#additional ED explorations
+#mod_2_E <- aov(BombED.Dry. ~ Wild.or.Hatch + Eggs_av,Bomb_with_covariates_notweird_noNA)
+#summary(mod_2_E) #nothing sig, still
+
 #lipid
 mod_universal_L <- aov(X..lipid ~ Wild.or.Hatch + Eggs_av + Length..mm.,Bomb_with_covariates_notweird_noNA)
 summary(mod_universal_L)
@@ -309,6 +313,62 @@ Bomb + Lipid
 
 #nice plot draft. Probably need to clean up so that Wild and hatchery SAY wild and hatchery, maybe get rid of legend all together
 
+
+#edit 05/23/22
+##making a professional graph. 
+##how to do this again??
+Bomb2 <- Bomb + coord_cartesian(ylim=c(24,27)) + 
+  scale_y_continuous(breaks =c (24, 25, 26, 27), expand=c(0,0)) +
+  scale_x_discrete(labels=c("Hatchery", "Wild"))
+
+Lipid2 <- Lipid + guides(color="none") + #get rid of legend
+  coord_cartesian(ylim=c(4.2,12)) +
+  scale_y_continuous(breaks=c(6, 8, 10,12), expand=c(0,0)) +
+  scale_x_discrete(labels=c("Hatchery", "Wild"))
+
+#I like those. Let's patchwork them
+Bomb2+Lipid2 #need to combine y-axis??
+#how to get rid of x-axis text and then add manual x-axis?
+Bomb3 <- Bomb2 + labs(x=element_blank())
+Lipid3 <- Lipid2 +labs(x=element_blank())
+
+#p4 <- ggplot(data.frame(l = Bomb2$labels$x, x = 0.3, y = 0.3)) +
+      geom_text(aes(x, y, label = l)) + 
+      theme_void() +
+      coord_cartesian(clip = "off")
+
+
+#(Bomb2+ Lipid2)/p4
+xlab <- Lipid$labels$x
+library(grid)      
+
+Bomb3 + Lipid3
+grid::grid.draw(grid::textGrob(xlab, x = 0.50, y =0.05))      
+      
+library(gridExtra)
+result <- Bomb3 + Lipid3
+gt <- patchwork::patchworkGrob(result)
+gridExtra::grid.arrange(gt, left = "Disp", bottom = "Hp // Cyl")
+
+result + draw_label(xlab, x=0.5, y=0.5)
+#megan code, to save last plot
+
+
+
+
+#try a different way...
+grid_bomb <- plot_grid(Bomb3, Lipid3, scale=0.95) #seems to work
+
+#temp_bomb <- plot_grid(NULL, grid_bomb, ncol = 2, rel_widths =c(0.5,6))
+bomb_base <- plot_grid(grid_bomb, NULL, ncol = 1, rel_heights = c(9.7,0.3))
+bomb_draw <- ggdraw(bomb_base) + draw_label (xlab, x = 0.56, y = 0.07, size = 14) #bomb_draw looks good! let's save that!
+#use this size dots or larger tho??
+
+
+#megan code, to save last plot
+#does this work with rmd? let's find out!!
+dev.new (width = 3.5, height = 2.225, unit = "in", noRStudioGD = T); last_plot()
+#ggsave ("Bomb_lipid_compound_graph.jpg", width = dev.size()[1], height = dev.size()[2]); dev.off()
 ```
 
 Lipid fig:
@@ -326,5 +386,30 @@ ggplot(Bomb_with_covariates_notweird_noNA) + aes(x=Length..mm., y=X..lipid, colo
 ```{r}
 summary(mod_E)
 plot(mod_E)
+```
+
+ON WHICH MODEL ARE MY RESULTS BASED?? 05/23/22
+->FROM THE T-TEST!
+-> we used the t-test restults because ANOVA showed that covariates were not signficiant... I think
+-> did GSI have an effect tho?
+```{r}
+#ones not used
+summary.lm(mod_E) 
+summary.lm(mod_universal_E)
+
+#the t-tests
+T_test_ED
+T_test_lipid
+
+#the standard deviations
+##for Energy
+sd(Wild_egg_energy$BombED.Dry.)
+sd(Hatch_egg_energy$BombED.Dry.)
+
+##for Lipid
+sd(Wild_lipid_energy$X..lipid)
+sd(Hatch_lipid_energy$X..lipid)
+
+
 ```
 
