@@ -486,6 +486,35 @@ sd(Wild_lipid_energy$X..lipid)
 sd(Hatch_lipid_energy$X..lipid)
 
 
+#re-do the t-tests and SD WITHOUT THE WEIRDOS
+#Bomb_with_covariates_notweird
+Wild_egg_energy_noweird <- Bomb_with_covariates_notweird %>% 
+  filter(Wild_or_hatch == "W") %>%
+  select(BombED.Dry.)
+    
+Hatch_egg_energy_noweird <- Bomb_with_covariates_notweird %>% 
+  filter(Wild_or_hatch == "H") %>%
+  select(BombED.Dry.)
+
+(T_test_ED_noweird <- t.test(Hatch_egg_energy_noweird, Wild_egg_energy_noweird, alternative="less", var.equal = T) )
+
+sd(Hatch_egg_energy_noweird$BombED.Dry.)
+sd(Wild_egg_energy_noweird$BombED.Dry.)
+
+#lipid now
+Wild_lipid_noweird <- Bomb_with_covariates_notweird %>% 
+  filter(Wild_or_hatch == "W") %>%
+  select(X..lipid)
+    
+Hatch_lipid_noweird <- Bomb_with_covariates_notweird %>% 
+  filter(Wild_or_hatch == "H") %>%
+  select(X..lipid)
+
+(T_test_lipid_noweird <- t.test(Hatch_lipid_noweird, Wild_lipid_noweird, alternative="less", var.equal = T) )
+
+sd(Hatch_lipid_noweird$X..lipid)
+sd(Wild_lipid_noweird$X..lipid)
+
 ```
 GSI sig test -> not sig at all...
 ```{r}
