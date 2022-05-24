@@ -278,6 +278,8 @@ summary(mod_universal_L)
 
 mod_univ_L_int <- aov(X..lipid ~ Wild.or.Hatch + Eggs_av + Length..mm. + Eggs_av:Length..mm.,Bomb_with_covariates_notweird_noNA)
 summary(mod_univ_L_int)
+
+#other 05/24/22
 ```
 
 
@@ -342,8 +344,8 @@ Lipid3 <- Lipid2 +labs(x=element_blank())
 xlab <- Lipid$labels$x
 library(grid)      
 
-Bomb3 + Lipid3
-grid::grid.draw(grid::textGrob(xlab, x = 0.50, y =0.05))      
+#Bomb3 + Lipid3
+#grid::grid.draw(grid::textGrob(xlab, x = 0.50, y =0.05))      
       
 library(gridExtra)
 result <- Bomb3 + Lipid3
@@ -370,6 +372,79 @@ bomb_draw <- ggdraw(bomb_base) + draw_label (xlab, x = 0.56, y = 0.07, size = 14
 dev.new (width = 3.5, height = 2.225, unit = "in", noRStudioGD = T); last_plot()
 #ggsave ("Bomb_lipid_compound_graph.jpg", width = dev.size()[1], height = dev.size()[2]); dev.off()
 ```
+
+
+Ok so above were my yesterday final graphs
+Today: 05/24/22
+Let's make sina-violin plot final graphs
+I think sina does not allow color, but violin does.
+So hatch orange, wild blue
+```{r}
+library(ggforce)
+?geom_sina
+?geom_violin
+
+View(Bomb_df)
+View(Bomb_with_covariates)
+length(Bomb_with_covariates$ID)
+length(Bomb_df$SIN)
+Bomb_df$Weird
+#Bomb_with_covariates_notweird
+
+#re-do t-test: Bomb_with_covariates_notwerid
+
+#first make the base: energy
+Bomb_v<- ggplot(Bomb_with_covariates_notweird) + aes(x=Wild_or_hatch, y=BombED.Dry.) + geom_violin() +  geom_sina(aes(color=Wild_or_hatch)) +
+ scale_color_manual(values=c("orange", "blue"), name=NULL)+
+  guides(color="none") +
+  labs(y= "Energy density (kJ/g)", x= "Fish origin")+
+  theme_cowplot()
+#that could work.
+
+#then make the base: lipid
+Lipid_v<- ggplot(Bomb_with_covariates_notweird) + aes(x=Wild_or_hatch, y=X..lipid) + geom_violin() +  geom_sina(aes(color=Wild_or_hatch)) +
+ scale_color_manual(values=c("orange", "blue"), name=NULL)+
+  guides(color="none") +
+  labs(y= "Lipid %", x= "Fish origin")+
+  theme_cowplot()
+#that works
+#now lets clean up them graphs
+Bomb_v2 <- Bomb_v + coord_cartesian(ylim=c(24,27)) + 
+  scale_y_continuous(breaks =c (24, 25, 26, 27), expand=c(0,0)) +
+  scale_x_discrete(labels=c("Hatchery", "Wild")) +
+  labs(x=element_blank())
+
+Lipid_v2 <- Lipid_v + guides(color="none") + #get rid of legend
+  coord_cartesian(ylim=c(4.2,12)) +
+  scale_y_continuous(breaks=c(6, 8, 10,12), expand=c(0,0)) +
+  scale_x_discrete(labels=c("Hatchery", "Wild")) +
+  labs(x=element_blank())
+
+#combine them and save ya' x-label
+xlab <- Lipid_v$labels$x
+
+library(gridExtra)
+library(patchwork)
+#the successful combining plots and labels way
+grid_V <- plot_grid(Bomb_v2, Lipid_v2, scale=0.95) #seems to work
+
+#temp_bomb <- plot_grid(NULL, grid_bomb, ncol = 2, rel_widths =c(0.5,6))
+V_base <- plot_grid(grid_V, NULL, ncol = 1, rel_heights = c(9.7,0.3))
+V_draw <- ggdraw(V_base) + draw_label(xlab, x = 0.56, y = 0.07, size = 14) #bomb_draw looks good! let's save that!
+#use this size dots or larger tho??
+#LOOKS GREAT! LEt's save this with megans save-a-plot code!
+dev.new (width = 3.5, height = 2.225, unit = "in", noRStudioGD = T); last_plot()
+ggsave ("Bomb_lipid_VIOLIN_graph.jpg", width = dev.size()[1], height = dev.size()[2]); dev.off()
+
+#aside:
+##did I use the correct (non-weird... fish for my egg t-test?? I think most were not weird, we can include WF 25... I think... Coho wild 1 and 2 were weird with only a few eggs) # I think I need to make sure I'm using the not weird ones
+##re-do using not weird fish.
+
+##does GSI impact energy or lipid
+###nope, we're good there.
+
+```
+
 
 Lipid fig:
 ```{r}
@@ -411,5 +486,12 @@ sd(Wild_lipid_energy$X..lipid)
 sd(Hatch_lipid_energy$X..lipid)
 
 
+```
+GSI sig test -> not sig at all...
+```{r}
+names(Bomb_with_covariates_notweird_noNA)
+universal_bomb <- lm(BombED.Dry. ~ Wild_or_hatch + GSI, data=Bomb_with_covariates_notweird_noNA)
+universal_bomb <- lm(BombED.Dry. ~GSI +  Wild_or_hatch, data=Bomb_with_covariates_notweird_noNA)
+summary(universal_bomb)
 ```
 
