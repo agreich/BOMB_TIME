@@ -237,6 +237,7 @@ Pause for now. 04/22/22. Above is what to do next.'
 ```{r}
 Bomb_with_covariates_notweird <- Bomb_with_covariates %>%
   filter(Weird=="n")
+Bomb_df <- Bomb_with_covariates_notweird
 Bomb_with_covariates_notweird_noNA <- na.omit(Bomb_with_covariates_notweird)
 
 
@@ -245,6 +246,61 @@ Bomb_with_covariates_notweird_noNA <- na.omit(Bomb_with_covariates_notweird)
 ##gets rid of fish number 25, where Milo didn't record the GSI
 ##ok, that's my DF, the one I want to use.
 ```
+
+OCTOBER 2022 edits, for the subset:
+ t-tests! But bom_df is subsetted
+```{r}
+?t.test
+library(dplyr)
+#H0: not different
+#HA: Hatch < Wild
+
+#bomb
+names(Bomb_df)
+Wild_egg_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "W") %>%
+  select(BombED.Dry.)
+    
+Hatch_egg_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "H") %>%
+  select(BombED.Dry.)
+
+(T_test_ED <- t.test(Hatch_egg_energy, Wild_egg_energy, alternative="less", var.equal = T) )
+##HA: x has a lower mean than y
+##assuming homogeneity (constant variance... Is this true tho?)
+
+t.test(Hatch_egg_energy, Wild_egg_energy, alternative="less", var.equal = F) 
+##HA: x has a lower mean than y
+##assuming homogeneity (Not assuming homogeneity)
+##probs not using this one
+
+
+#lipid
+Wild_lipid_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "W") %>%
+  select(X..lipid)
+    
+Hatch_lipid_energy <- Bomb_df %>% 
+  filter(Wild_or_hatch == "H") %>%
+  select(X..lipid)
+
+(T_test_lipid <- t.test(Hatch_lipid_energy, Wild_lipid_energy, alternative="less", var.equal = T))
+
+
+#standard error
+T_test_ED$stderr
+T_test_lipid$stderr
+
+
+#I should probably record these t-test values in the resutls section. My results section is a work in progress...
+```
+
+
+
+
+
+
+
 
 use this dataframe: Bomb_with_covariates_notweird_noNA
 Covariates of interest: 
